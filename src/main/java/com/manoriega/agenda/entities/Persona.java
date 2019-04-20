@@ -48,7 +48,7 @@ public class Persona {
 
     @OneToMany(mappedBy = "persona",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 //    @JoinColumn(name = "personas_id")
-    private List<Direccion> direccionSet;
+    private List<Direccion> direccionList;
     //
     @OneToMany(mappedBy = "persona",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Telefono> telefonoSet;

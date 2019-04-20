@@ -1,6 +1,7 @@
 package com.manoriega.agenda.controller;
 
 import com.manoriega.agenda.dao.IPersonaDao;
+import com.manoriega.agenda.dto.PersonaDTO;
 import com.manoriega.agenda.entities.Direccion;
 import com.manoriega.agenda.entities.Persona;
 import com.manoriega.agenda.service.PersonaService;
@@ -29,47 +30,31 @@ public class PersonaApiController {
 
     @PostMapping(PersonaApiController.CREATE)
     public Persona create(@RequestBody Persona persona) {
-        return personaDao.save(persona);
+        return personaService.create(persona);
     }
 
     @GetMapping(PersonaApiController.LIST)
-    public List<Persona> personaList() {
-        return personaDao.findAll();
+    public List<PersonaDTO> personaList() {
+        return personaService.personaDTOList();
     }
 
     @DeleteMapping(PersonaApiController.DELETE)
     public Boolean delete(@PathVariable Long id) {
-        Optional<Persona> persona = personaDao.findById(id);
-        if (persona.isPresent()) {
-            personaDao.delete(persona.get());
-            return persona.isPresent();
-        } else return false;
+        return personaService.delete(id);
     }
 
     @DeleteMapping(PersonaApiController.DELETE_ALL)
     public Boolean deleteAll() {
-        Boolean resultado = (personaDao.count() > 1) ? true : false;
-        if (resultado) {
-            personaDao.deleteAll();
-            return true;
-        } else return false;
+        return personaService.deleteAll();
     }
 
     @PutMapping(PersonaApiController.UPDATE)
-    public Persona update(@RequestBody Persona newPersona, @PathVariable Long id) {
-        return personaDao.findById(id).map(persona -> {
-            persona.setPrimerNombre(newPersona.getPrimerNombre());
-//            persona.setPrimerApellido(newPersona.getPrimerApellido());
-            return personaDao.save(persona);
-        }).orElseGet(() -> {
-            newPersona.setId(id);
-            return personaDao.save(newPersona);
-        });
+    public PersonaDTO update(@RequestBody Persona newPersona, @PathVariable Long id) {
+        return personaService.update(newPersona, id);
     }
 
     @GetMapping(PersonaApiController.BYID)
-    public Optional<Persona> getById(Long id){
-        return personaDao.findById(id);
+    public Optional<PersonaDTO> getById(Long id) {
+        return personaService.byId(id);
     }
-
 }
