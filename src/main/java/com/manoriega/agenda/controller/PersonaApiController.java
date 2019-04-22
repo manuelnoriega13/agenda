@@ -2,10 +2,10 @@ package com.manoriega.agenda.controller;
 
 import com.manoriega.agenda.dao.IPersonaDao;
 import com.manoriega.agenda.dto.PersonaDTO;
-import com.manoriega.agenda.entities.Direccion;
 import com.manoriega.agenda.entities.Persona;
 import com.manoriega.agenda.service.PersonaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +13,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(PersonaApiController.HEAD)
+@Validated
 public class PersonaApiController {
     public static final String HEAD = "/api/persona";
     public static final String CREATE = "/create";
@@ -49,12 +50,25 @@ public class PersonaApiController {
     }
 
     @PutMapping(PersonaApiController.UPDATE)
-    public PersonaDTO update(@RequestBody Persona newPersona, @PathVariable Long id) {
-        return personaService.update(newPersona, id);
+    public Optional<PersonaDTO> update(@RequestBody Persona newPersona, @PathVariable Long id) {
+        Optional<Persona> p = personaDao.findById(id);
+        Persona P = p.map(persona -> {
+            persona.setActivo(newPersona.getActivo());
+            persona.setPrimerNombre(newPersona.getPrimerNombre());
+            return persona;
+        }).get();
+        personaDao.save(p.get());
+
+        PersonaDTO personaDTO = PersonaDTO.builder()
+                .activo(P.getActivo())
+                .build();
+
+        return Optional.of(personaDTO);
+
     }
 
     @GetMapping(PersonaApiController.BYID)
-    public Optional<PersonaDTO> getById(Long id) {
+    public Optional<PersonaDTO> getById(@PathVariable Long id) {
         return personaService.byId(id);
     }
 }
