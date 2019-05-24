@@ -1,4 +1,4 @@
-package com.manoriega.agenda.config;
+package com.manoriega.agenda.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
